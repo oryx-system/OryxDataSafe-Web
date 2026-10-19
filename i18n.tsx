@@ -5,9 +5,10 @@ import { datastationTranslations } from './i18n/datastation';
 import { brochureTranslations } from './i18n/brochures';
 import { calibrationTranslations } from './i18n/calibration';
 import { customerTranslations } from './i18n/customer';
+import { freeToolTranslations } from './i18n/freeTools';
 
 export type Language = 'ko' | 'en' | 'ru';
-const translations = { ...commonTranslations, ...supportingTranslations, ...datastationTranslations, ...brochureTranslations, ...calibrationTranslations, ...customerTranslations };
+const translations = { ...commonTranslations, ...supportingTranslations, ...datastationTranslations, ...brochureTranslations, ...calibrationTranslations, ...customerTranslations, ...freeToolTranslations };
 type LanguageContextValue = { language: Language; setLanguage: (language: Language) => void; t: (source: string) => string };
 const LanguageContext = createContext<LanguageContextValue | null>(null);
 export const readingElements = 'main h1, main h2, main h3, main h4, main p, main li, main figure, main tr, main summary';

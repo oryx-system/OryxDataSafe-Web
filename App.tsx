@@ -2,12 +2,13 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import OnePage from "./views/OnePage";
+import { FreeToolDetail } from "./views/FreeTools";
 import { useRevealMotion } from "./hooks/useRevealMotion";
 import { useLanguage } from "./i18n";
 import "./styles.css";
 import "./one-page.css";
 
-const sections = ["home", "about", "datastation", "lockdown", "calibration", "brochures", "implementation", "validation", "privacy", "contact"];
+const sections = ["home", "about", "datastation", "lockdown", "calibration", "free-tools", "brochures", "implementation", "validation", "privacy", "contact"];
 const legacyAnchors: Record<string, string> = {
   "/": "home", "/home": "home", "/products": "datastation", "/solutions": "datastation",
   "/equipment": "datastation", "/necessity": "datastation", "/datastation": "datastation",
@@ -19,14 +20,30 @@ const legacyAnchors: Record<string, string> = {
 };
 
 export default function App() {
+  const [hash, setHash] = useState(() => window.location.hash);
+  const initialDocument = useRef(true);
+  useEffect(() => {
+    initialDocument.current = false;
+    const update = () => setHash(window.location.hash);
+    window.addEventListener('hashchange', update);
+    return () => window.removeEventListener('hashchange', update);
+  }, []);
+  if (hash.startsWith('#free-tools/')) return <FreeToolDetail slug={hash.slice('#free-tools/'.length)} />;
+  return <MainSite initialDocument={initialDocument.current} />;
+}
+
+function MainSite({ initialDocument }: { initialDocument: boolean }) {
   const { t } = useLanguage();
+  useEffect(() => {
+    document.title = t('Oryx DataSafe | 전자기록·전자서명·데이터 무결성');
+  }, [t]);
   const mainRef = useRef<HTMLElement>(null);
   const pendingRestoration = useRef<ScrollRestoration | null>(null);
   const [currentSection, setCurrentSection] = useState("home");
   useRevealMotion(mainRef);
 
   useLayoutEffect(() => {
-    const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined;
+    const navigation = initialDocument ? performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming | undefined : undefined;
     const restoringDocument = navigation?.type === 'reload' || navigation?.type === 'back_forward';
     // The browser can attempt restoration before React has rendered a tall document.
     // Retain this tab's reading position for reloads; history traversal stays native.

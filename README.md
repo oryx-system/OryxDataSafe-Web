@@ -1,5 +1,18 @@
 # Oryx DataSafe
 
+## 무료 도구와 릴리스 관리
+
+무료 소프트웨어 목록은 `#free-tools`, 프로그램 상세는 `#free-tools/<slug>`입니다. 유료 제품과 별도의 메뉴를 사용하며, 목록에 등록한 프로그램만 표시합니다.
+
+- `data/freeTools.ts`의 `freeTools`에 프로그램 이름, 고유 slug, 분류와 검증된 소개를 등록합니다.
+- 같은 파일의 `toolReleases[slug]`는 최신 릴리스부터 정렬합니다. 첫 항목이 목록·상세 화면의 모든 최신 다운로드 버튼을 결정합니다.
+- 실제 배포 파일과 확인된 버전이 없으면 배열을 비워 둡니다. 다운로드는 비활성 상태의 **준비 중**, 변경 내역은 미등록 안내로 표시하며 버전·날짜를 만들지 않습니다.
+- Modbus Check 실제 링크 입력 지점은 `toolReleases['modbus-check']`입니다. Google Drive에 업로드하고 공개 접근을 확인한 파일의 ID를 `driveFileId`에 입력합니다. 버전은 `version`, 확인된 출시일만 선택적으로 `releasedOn`(YYYY-MM-DD), 실제 변경은 `changes.added / improved / fixed` 배열에 작성합니다. 새 릴리스는 맨 앞에 추가합니다.
+- 다운로드는 Google의 일반 `uc?export=download&id=…` 주소를 사용합니다. 미리보기 링크나 폴더 URL을 넣지 않습니다. 권한·대용량·보안 검사 절차를 우회하거나 다운로드 성공을 보장하지 않습니다.
+- 새 문구는 기존 `i18n/freeTools.ts`의 영어·러시아어 번역에도 추가합니다.
+
+검증: 기존 typecheck/build/test와 `tests/free-tools.spec.ts`의 목록·상세·준비 중·직접 진입·뒤로 가기·다국어·모바일 테스트를 실행합니다.
+
 홍승철 대표가 Oryx System과 별도로 운영하는 IT 중심 회사 Oryx DataSafe의 소프트웨어 소개 사이트입니다. 제약회사 업무·현장 요구에 맞춘 소프트웨어 개발과 전자기록·데이터 관리·무결성·보안 및 교정 업무를 다룹니다. React 19, TypeScript, Vite로 구성하며 한국어·영어·러시아어로 같은 제품 내용을 제공합니다. 미확인 법인 형태·설립연도·회사 규모는 표시하지 않습니다.
 
 ## 실행과 검증

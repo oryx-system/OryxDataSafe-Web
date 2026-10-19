@@ -4,6 +4,7 @@ import Home from "./Home";
 import DataStationPage from "./DataStation";
 import CalibrationSection from "./Calibration";
 import BrochuresPage from "./Brochures";
+import FreeTools from "./FreeTools";
 import { AboutSection, ContactSection, ImplementationSection, PrivacySection, ValidationSection } from "./SupportingSections";
 
 export default function OnePage() {
@@ -24,6 +25,7 @@ export default function OnePage() {
         </div>
       </section>
       <CalibrationSection />
+      <FreeTools />
       <div id="brochures" data-main-section tabIndex={-1}><BrochuresPage embedded /></div>
       <ImplementationSection />
       <ValidationSection />

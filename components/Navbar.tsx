@@ -7,6 +7,7 @@ const links = [
   { path: "datastation", label: "DataStation" },
   { path: "lockdown", label: "LockDown" },
   { path: "calibration", label: "Calibration" },
+  { path: "free-tools", label: "무료 도구" },
   { path: "brochures", label: "브로셔" },
 ];
 export default function Navbar({ currentPath }: { currentPath: string }) {
