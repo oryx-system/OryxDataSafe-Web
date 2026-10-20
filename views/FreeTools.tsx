@@ -3,14 +3,15 @@ import { ArrowLeft, ArrowRight, Download, Radio } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { useLanguage } from '../i18n';
-import { freeTools, toolReleases, latestToolRelease, driveDownloadUrl } from '../data/freeTools';
+import { freeTools, toolReleases, latestToolRelease, githubReleaseDownloadUrl } from '../data/freeTools';
+import { toolGuides } from '../data/toolGuides';
 import './free-tools.css';
 
 function LatestDownload({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const latest = latestToolRelease(slug);
   if (!latest) return <div className="tool-download"><button className="button button-secondary" type="button" disabled>{t('다운로드 준비 중')}</button><p>{t('다운로드 파일이 준비되면 이곳에서 최신 버전을 받을 수 있습니다.')}</p></div>;
-  return <div className="tool-download"><a className="button button-primary" href={driveDownloadUrl(latest.driveFileId)!}><Download size={18} aria-hidden="true" />{t('최신 버전 다운로드')}</a><p>{t('최신 버전')} {latest.version}</p><p>{t('Google Drive의 권한 확인이나 보안 검사 화면이 표시될 수 있습니다.')}</p></div>;
+  return <div className="tool-download"><a className="button button-primary" href={githubReleaseDownloadUrl(latest.download)!}><Download size={18} aria-hidden="true" />{t('최신 버전 다운로드')}</a><p>{t('최신 버전')} {latest.version}{latest.prerelease && <> · {t('사전 공개')}</>}</p><p>{t('설치 파일은 GitHub Releases에서 다운로드됩니다.')}</p>{latest.notice && <p className="tool-release-notice">{t(latest.notice)}</p>}</div>;
 }
 
 export default function FreeTools() {
@@ -32,7 +33,8 @@ export function FreeToolDetail({ slug }: { slug: string }) {
   const { t, language } = useLanguage();
   const main = useRef<HTMLElement>(null);
   const tool = freeTools.find(item => item.slug === slug);
-  const releases = (toolReleases[slug] ?? []).filter(release => driveDownloadUrl(release.driveFileId));
+  const releases = (toolReleases[slug] ?? []).filter(release => githubReleaseDownloadUrl(release.download));
+  const guide = toolGuides[slug] ?? [];
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
     main.current?.focus({ preventScroll: true });
@@ -48,10 +50,20 @@ export function FreeToolDetail({ slug }: { slug: string }) {
         <h1 className="page-title">{tool?.name ?? t('프로그램을 찾을 수 없습니다.')}</h1>
         {tool && <><p className="tool-lead">{t(tool.description)}</p><LatestDownload slug={slug} /></>}
       </div></header>
+      {tool && guide.length > 0 && <section className="section" aria-labelledby="tool-guide-heading"><div className="container tool-guide">
+        <div className="section-heading"><p className="section-kicker">PROGRAM GUIDE</p><h2 id="tool-guide-heading">{t('사용 안내')}</h2><p>{t('설치와 연결 설정부터 데이터 확인·기록까지, 사용 전에 알아둘 내용을 안내합니다.')}</p></div>
+        <div className="tool-guide-sections">{guide.map(section => <article className="tool-guide-section" key={section.id} aria-labelledby={`tool-guide-${section.id}`}>
+          <h3 id={`tool-guide-${section.id}`}>{t(section.title)}</h3>
+          {section.paragraphs.map(paragraph => <p key={paragraph}>{t(paragraph)}</p>)}
+          {section.items && (section.ordered ? <ol>{section.items.map(item => <li key={item}>{t(item)}</li>)}</ol> : <ul>{section.items.map(item => <li key={item}>{t(item)}</li>)}</ul>)}
+        </article>)}</div>
+      </div></section>}
       {tool && <section className="section" aria-labelledby="tool-changelog-heading"><div className="container tool-history">
         <div className="section-heading"><p className="section-kicker">RELEASE NOTES</p><h2 id="tool-changelog-heading">{t('변경 내역')}</h2><p>{t('버전별 추가·개선·수정 사항을 확인하세요.')}</p></div>
         {releases.length === 0 ? <p className="tool-empty">{t('확인된 릴리스 내역이 아직 없습니다. 배포 정보가 준비되면 안내합니다.')}</p> : <ol className="tool-releases">{releases.map(release => <li key={release.version}>
-          <article><h3>{release.version}</h3>{release.releasedOn && <time dateTime={release.releasedOn}>{release.releasedOn}</time>}
+          <article><h3>{release.version}{release.prerelease && <> · {t('사전 공개')}</>}</h3>{release.releasedOn && <time dateTime={release.releasedOn}>{release.releasedOn}</time>}
+            {release.releaseNotesUrl && <p><a href={release.releaseNotesUrl}>{t('공식 릴리스 안내')}</a></p>}
+            <p className="tool-checksum">SHA256: <code>{release.download.sha256}</code></p>
             {(['added', 'improved', 'fixed'] as const).map(kind => release.changes[kind].length > 0 && <div key={kind} className="tool-change"><h4>{t({ added: '추가', improved: '개선', fixed: '수정' }[kind])}</h4><ul>{release.changes[kind].map(change => <li key={change}>{t(change)}</li>)}</ul></div>)}
           </article>
         </li>)}</ol>}

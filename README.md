@@ -7,11 +7,15 @@
 - `data/freeTools.ts`의 `freeTools`에 프로그램 이름, 고유 slug, 분류와 검증된 소개를 등록합니다.
 - 같은 파일의 `toolReleases[slug]`는 최신 릴리스부터 정렬합니다. 첫 항목이 목록·상세 화면의 모든 최신 다운로드 버튼을 결정합니다.
 - 실제 배포 파일과 확인된 버전이 없으면 배열을 비워 둡니다. 다운로드는 비활성 상태의 **준비 중**, 변경 내역은 미등록 안내로 표시하며 버전·날짜를 만들지 않습니다.
-- Modbus Check 실제 링크 입력 지점은 `toolReleases['modbus-check']`입니다. Google Drive에 업로드하고 공개 접근을 확인한 파일의 ID를 `driveFileId`에 입력합니다. 버전은 `version`, 확인된 출시일만 선택적으로 `releasedOn`(YYYY-MM-DD), 실제 변경은 `changes.added / improved / fixed` 배열에 작성합니다. 새 릴리스는 맨 앞에 추가합니다.
-- 다운로드는 Google의 일반 `uc?export=download&id=…` 주소를 사용합니다. 미리보기 링크나 폴더 URL을 넣지 않습니다. 권한·대용량·보안 검사 절차를 우회하거나 다운로드 성공을 보장하지 않습니다.
+- Modbus Check 실제 링크 입력 지점은 `toolReleases['modbus-check']`입니다. 설치 검증을 마친 파일을 설치 파일 전용 **공개 배포 저장소**의 GitHub Releases에 등록하고, 로그아웃 상태에서 다운로드한 파일의 SHA256을 인계받은 원본 해시와 대조한 뒤 `download.url`과 `download.sha256`에 입력합니다. 기존 배포 저장소가 있으면 재사용하고 개발 소스 저장소의 가시성은 변경하지 않습니다. 검증된 URL·해시를 받기 전에는 빈 배열을 유지합니다.
+- `download.url`에는 GitHub가 제공하는 고정 버전 자산 주소 `https://github.com/<owner>/<release-repository>/releases/download/<tag>/<asset>`를 그대로 입력합니다. 이동하는 `releases/latest/download` 주소나 릴리스 소개·소스 압축·미리보기 주소를 사용하지 않습니다. URL·64자리 SHA256 형식 검사는 실제 접근·설치·파일 해시 검증을 대신하지 않습니다. 홈페이지는 외부 자산을 직접 연결하며 설치 파일이나 GitHub 자격증명을 홈페이지 빌드에 포함하지 않습니다.
+- 버전은 `version`, 확인된 출시일만 선택적으로 `releasedOn`(YYYY-MM-DD), 실제 변경은 `changes.added / improved / fixed` 배열에 작성합니다. 새 릴리스는 맨 앞에 추가하고 이전 버전의 변경 내역을 보존합니다. 첫 항목의 다운로드 메타데이터가 유효하지 않으면 준비 중을 표시하며 이전 버전을 최신으로 대신 표시하지 않습니다.
+- 사전 공개는 `prerelease: true`, 검증된 공식 릴리스 페이지는 `releaseNotesUrl`, 해당 버전의 알려진 제한은 `notice`에 등록합니다. 사전 공개·미서명·미포함 보안 수정 같은 실제 상태를 다운로드 옆에 표시하고, 공개 페이지에서 SHA256을 확인할 수 있게 합니다. 새 안내와 변경 내역에도 영어·러시아어 번역을 추가합니다.
 - 새 문구는 기존 `i18n/freeTools.ts`의 영어·러시아어 번역에도 추가합니다.
+- 프로그램 사용 안내는 `data/toolGuides.ts`와 `i18n/toolGuides.ts`에서 관리합니다. 소개·연결·주소 기준·설정·사용 조건을 릴리스 내역과 별도로 유지하며, 확인된 기능만 설명합니다.
+- 공개 배포 저장소에 옮길 Modbus Check 문서는 [README](release/modbus-check/README.md)와 [한국어 사용 가이드](release/modbus-check/USER_GUIDE.ko.md)에 준비합니다. 이 경로는 `public`에 포함되지 않으며 설치 파일이나 새 배포 저장소를 만들지 않습니다. 게시 전 [인계 확인표](review/modbus-guide-publish-checklist.md)를 확인합니다.
 
-검증: 기존 typecheck/build/test와 `tests/free-tools.spec.ts`의 목록·상세·준비 중·직접 진입·뒤로 가기·다국어·모바일 테스트를 실행합니다.
+검증: 기존 typecheck/build/test와 `tests/free-tools.spec.ts`의 GitHub 자산 URL·SHA256 형식, 목록·상세·준비 중·직접 진입·뒤로 가기·다국어·모바일 테스트를 실행합니다. 시험용 릴리스 데이터는 로컬 시험의 응답에만 주입하며 운영 배열에는 추가하지 않습니다. 등록한 실제 릴리스의 목록·상세 링크·사전 공개 상태·번역도 검사합니다. 실제 파일 인계 후 공개 다운로드의 응답·파일명·SHA256을 다시 확인하고, 홈페이지 배포 후 목록과 상세의 링크가 같은 검증된 자산을 가리키는지 확인합니다.
 
 홍승철 대표가 Oryx System과 별도로 운영하는 IT 중심 회사 Oryx DataSafe의 소프트웨어 소개 사이트입니다. 제약회사 업무·현장 요구에 맞춘 소프트웨어 개발과 전자기록·데이터 관리·무결성·보안 및 교정 업무를 다룹니다. React 19, TypeScript, Vite로 구성하며 한국어·영어·러시아어로 같은 제품 내용을 제공합니다. 미확인 법인 형태·설립연도·회사 규모는 표시하지 않습니다.
 

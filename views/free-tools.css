@@ -14,6 +14,14 @@
 .tool-detail .page-title {margin-top:12px;}
 .tool-lead {font-size:1.0625rem;line-height:1.95;color:var(--muted);max-width:65ch;margin-top:22px;}
 .tool-history {max-width:1000px;}
+.tool-detail .tool-guide {max-width:1000px;}
+.tool-guide-sections {display:grid;gap:36px;}
+.tool-guide-section {min-width:0;border-top:1px solid var(--line);padding-top:26px;overflow-wrap:anywhere;}
+.tool-guide-section h3 {font-size:1.375rem;line-height:1.5;margin:0 0 16px;}
+.tool-guide-section p,.tool-guide-section li {color:var(--muted);line-height:1.95;}
+.tool-guide-section p + p {margin-top:14px;}
+.tool-guide-section ul,.tool-guide-section ol {margin:14px 0 0;padding-left:24px;}
+.tool-guide-section li + li {margin-top:10px;}
 .tool-empty {border-top:1px solid var(--line);padding-top:26px;color:var(--muted);}
 .tool-releases {list-style:none;padding:0;margin:0;}
 .tool-releases > li {padding:30px 0;border-top:1px solid var(--line);}
@@ -24,3 +32,5 @@
 .tool-change ul {margin:8px 0 0;padding-left:24px;}
 @media(max-width:1000px) {.tool-grid {grid-template-columns:repeat(2,minmax(0,1fr));gap:30px;}}
 @media(max-width:600px) {.tool-grid {grid-template-columns:minmax(0,1fr);gap:24px;}.tool-detail .page-hero {padding-block:36px 42px;}.tool-back {margin-bottom:26px;}}
+.tool-checksum { overflow-wrap: anywhere; }
+.tool-checksum code { font-size: .875em; }
