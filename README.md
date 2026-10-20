@@ -12,7 +12,7 @@
 - 버전은 `version`, 확인된 출시일만 선택적으로 `releasedOn`(YYYY-MM-DD), 실제 변경은 `changes.added / improved / fixed` 배열에 작성합니다. 새 릴리스는 맨 앞에 추가하고 이전 버전의 변경 내역을 보존합니다. 첫 항목의 다운로드 메타데이터가 유효하지 않으면 준비 중을 표시하며 이전 버전을 최신으로 대신 표시하지 않습니다.
 - 사전 공개는 `prerelease: true`, 검증된 공식 릴리스 페이지는 `releaseNotesUrl`, 해당 버전의 알려진 제한은 `notice`에 등록합니다. 사전 공개·미서명·미포함 보안 수정 같은 실제 상태를 다운로드 옆에 표시하고, 공개 페이지에서 SHA256을 확인할 수 있게 합니다. 새 안내와 변경 내역에도 영어·러시아어 번역을 추가합니다.
 - 새 문구는 기존 `i18n/freeTools.ts`의 영어·러시아어 번역에도 추가합니다.
-- 프로그램 사용 안내는 `data/toolGuides.ts`와 `i18n/toolGuides.ts`에서 관리합니다. 소개·연결·주소 기준·설정·사용 조건을 릴리스 내역과 별도로 유지하며, 확인된 기능만 설명합니다.
+- 홈페이지에는 짧은 소개와 `data/toolGuides.ts`의 핵심 편의 기능 4개만 표시합니다. 번역은 `i18n/toolGuides.ts`에서 관리하며, 설치·연결·주소·설정의 전체 사용법은 GitHub의 한국어 가이드로 연결합니다. 긴 절차와 기능 목록은 홈페이지에 반복하지 않습니다.
 - 공개 배포 저장소에 옮길 Modbus Check 문서는 [README](release/modbus-check/README.md)와 [한국어 사용 가이드](release/modbus-check/USER_GUIDE.ko.md)에 준비합니다. 이 경로는 `public`에 포함되지 않으며 설치 파일이나 새 배포 저장소를 만들지 않습니다. 게시 전 [인계 확인표](review/modbus-guide-publish-checklist.md)를 확인합니다.
 
 검증: 기존 typecheck/build/test와 `tests/free-tools.spec.ts`의 GitHub 자산 URL·SHA256 형식, 목록·상세·준비 중·직접 진입·뒤로 가기·다국어·모바일 테스트를 실행합니다. 시험용 릴리스 데이터는 로컬 시험의 응답에만 주입하며 운영 배열에는 추가하지 않습니다. 등록한 실제 릴리스의 목록·상세 링크·사전 공개 상태·번역도 검사합니다. 실제 파일 인계 후 공개 다운로드의 응답·파일명·SHA256을 다시 확인하고, 홈페이지 배포 후 목록과 상세의 링크가 같은 검증된 자산을 가리키는지 확인합니다.

@@ -1,7 +1,9 @@
 export const freeToolTranslations: Record<string, { en: string; ru: string }> = {
   '사전 공개': { en: 'Pre-release', ru: 'Предварительный выпуск' },
   '공식 릴리스 안내': { en: 'Official release notes', ru: 'Официальное описание выпуска' },
-  '사전 공개 설치 파일은 미서명이며 예정된 Node HIGH 보안 수정이 포함되지 않았습니다. 사용 전 검수 범위와 알려진 제한을 확인하세요.': { en: 'The pre-release installer is unsigned and does not include the scheduled Node HIGH security fix. Review the validation scope and known limitations before use.', ru: 'Установщик предварительного выпуска не подписан и не содержит запланированного исправления безопасности Node HIGH. Перед использованием ознакомьтесь с объёмом проверки и известными ограничениями.' },
+  '미서명 EXE · 예정된 Node HIGH 보안 수정 미포함.': { en: 'Unsigned EXE · Scheduled Node HIGH security fix not included.', ru: 'EXE без подписи · Запланированное исправление безопасности Node HIGH не включено.' },
+  '릴리스 안내·알려진 제한 (한국어)': { en: 'Release notes and known limitations (Korean)', ru: 'Описание выпуска и известные ограничения (на корейском)' },
+  'GitHub 상세 사용법 (한국어)': { en: 'Detailed guide on GitHub (Korean)', ru: 'Подробное руководство на GitHub (на корейском)' },
   'Windows x64용 0.2.0-rc.7 사전 공개 설치 파일을 제공합니다. Node.js는 별도로 설치하지 않습니다.': { en: 'A 0.2.0-rc.7 pre-release installer is provided for Windows x64. Node.js does not need a separate installation.', ru: 'Предоставляется установщик предварительного выпуска 0.2.0-rc.7 для Windows x64. Отдельная установка Node.js не требуется.' },
   '콘솔 창 없는 GUI 실행기, Windows 아이콘과 기본 바탕화면 바로가기를 제공합니다.': { en: 'Provides a GUI launcher without a console window, Windows icons and a default desktop shortcut.', ru: 'Предоставляются GUI-запуск без консольного окна, значки Windows и создаваемый по умолчанию ярлык на рабочем столе.' },
   '편집용 XLSM의 Bit 0~15 직접 입력과 다중 워드 후속 행 보호, 일반 설명·비트 메타데이터 보존을 지원합니다.': { en: 'Supports direct Bit 0–15 entry in the editable XLSM, protection of subsequent rows in multiword values, and preservation of general descriptions and bit metadata.', ru: 'Поддерживаются прямой ввод Bit 0–15 в редактируемом XLSM, защита последующих строк многословных значений и сохранение общих описаний и метаданных битов.' },

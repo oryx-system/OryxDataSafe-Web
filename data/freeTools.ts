@@ -44,7 +44,7 @@ export const toolReleases: Record<string, ToolRelease[]> = {
       prerelease: true,
       releasedOn: '2026-10-20',
       releaseNotesUrl: 'https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.7',
-      notice: '사전 공개 설치 파일은 미서명이며 예정된 Node HIGH 보안 수정이 포함되지 않았습니다. 사용 전 검수 범위와 알려진 제한을 확인하세요.',
+      notice: '미서명 EXE · 예정된 Node HIGH 보안 수정 미포함.',
       download: {
         url: 'https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe',
         sha256: '9b8dd1f9e9718248e4634ff248fe0100226e9a6756e343502a1943665361bc08',

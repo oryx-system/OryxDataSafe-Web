@@ -8,8 +8,9 @@ import { toolGuides } from '../data/toolGuides';
 import { freeToolTranslations } from '../i18n/freeTools';
 import { toolGuideTranslations } from '../i18n/toolGuides';
 
-const guideHeading = '사용 안내';
-const guideIntroduction = '설치와 연결 설정부터 데이터 확인·기록까지, 사용 전에 알아둘 내용을 안내합니다.';
+const detailedGuideUrl = 'https://github.com/oryx-system/OryxDataSafe-Web/blob/main/release/modbus-check/USER_GUIDE.ko.md';
+const detailedGuideLabel = 'GitHub 상세 사용법 (한국어)';
+const releaseNoticeLabel = '릴리스 안내·알려진 제한 (한국어)';
 const translateGuide = (source: string, language: 'ko' | 'en' | 'ru') => language === 'ko' ? source : toolGuideTranslations[source][language];
 const translateFreeTool = (source: string, language: 'ko' | 'en' | 'ru') => language === 'ko' ? source : freeToolTranslations[source][language];
 // Pinned to the official release handoff; binary bytes are verified separately.
@@ -25,13 +26,15 @@ const publishedModbusRelease = {
 };
 
 async function expectPublishedDownload(scope: Locator, language: 'ko' | 'en' | 'ru') {
-  await expect(scope.locator('.tool-download a')).toHaveCount(1);
+  await expect(scope.locator('.tool-download a.button')).toHaveCount(1);
   await expect(scope.getByRole('link', { name: translateFreeTool('최신 버전 다운로드', language), exact: true })).toHaveAttribute('href', publishedModbusRelease.download.url);
   await expect(scope.locator('.tool-download')).toContainText(publishedModbusRelease.version);
   await expect(scope.locator('.tool-download')).toContainText(translateFreeTool('사전 공개', language));
   await expect(scope.locator('.tool-download button')).toHaveCount(0);
   const notice = latestToolRelease('modbus-check')!.notice!;
-  await expect(scope.locator('.tool-release-notice')).toHaveText(translateFreeTool(notice, language));
+  await expect(scope.locator('.tool-release-notice')).toContainText(translateFreeTool(notice, language));
+  await expect(scope.locator('.tool-release-notice').getByRole('link', { name: translateFreeTool(releaseNoticeLabel, language), exact: true })).toHaveAttribute('href', publishedModbusRelease.releaseNotesUrl);
+  await expect(scope.locator('.tool-download a')).toHaveCount(2);
 }
 
 async function expectGuideFits(page: Page) {
@@ -53,9 +56,13 @@ async function expectGuideFits(page: Page) {
   expect(layout.clipped).toEqual([]);
 }
 
-test('catalog, release notices and every guide section have complete English and Russian translations', () => {
-  const sources = new Set([guideHeading, guideIntroduction]);
-  expect(toolGuides['modbus-check'].length).toBeGreaterThan(0);
+test('catalog, release notices and brief benefits have complete English and Russian translations', () => {
+  const sources = new Set<string>();
+  expect(toolGuides['modbus-check']).toHaveLength(1);
+  expect(toolGuides['modbus-check'][0].id).toBe('benefits');
+  expect(toolGuides['modbus-check'][0].paragraphs).toHaveLength(0);
+  expect(toolGuides['modbus-check'][0].items).toHaveLength(4);
+  expect(toolGuides['modbus-check'][0].ordered).not.toBe(true);
   for (const [slug, sections] of Object.entries(toolGuides)) {
     const ids = sections.map(section => section.id);
     expect(new Set(ids).size, `${slug}: unique section IDs`).toBe(ids.length);
@@ -75,7 +82,7 @@ test('catalog, release notices and every guide section have complete English and
       ...(release.notice ? [release.notice] : []),
       ...release.changes.added, ...release.changes.improved, ...release.changes.fixed,
     ])).map(source => ({ source, translations: freeToolTranslations[source] })),
-    ...['사전 공개', '공식 릴리스 안내'].map(source => ({ source, translations: freeToolTranslations[source] })),
+    ...['사전 공개', '공식 릴리스 안내', releaseNoticeLabel, detailedGuideLabel].map(source => ({ source, translations: freeToolTranslations[source] })),
   ];
   for (const { source, translations } of entries) for (const language of ['en', 'ru'] as const) {
     const translated = translations?.[language];
@@ -208,6 +215,10 @@ test('free tools catalog and detail work across languages, history and narrow sc
     await expect(page.getByRole('heading', { level: 1, name: 'Modbus Check', exact: true })).toBeVisible();
     await expect(page.locator('.tool-lead')).toHaveText(description);
     await expectPublishedDownload(page.locator('.tool-detail'), language);
+    const history = page.locator('.tool-history-details');
+    await expect(history).not.toHaveAttribute('open');
+    await history.locator('summary').click();
+    await expect(history).toHaveAttribute('open', '');
     const releases = page.locator('.tool-releases > li');
     await expect(releases).toHaveCount(toolReleases['modbus-check'].length);
     await expect(releases.first().locator('h3')).toContainText(publishedModbusRelease.version);
@@ -220,40 +231,42 @@ test('free tools catalog and detail work across languages, history and narrow sc
     ].map(source => translateFreeTool(source, language))));
     const guide = page.locator('.tool-guide');
     const guideSections = toolGuides['modbus-check'];
-    await expect(guide.getByRole('heading', { level: 2, name: translateGuide(guideHeading, language), exact: true })).toBeVisible();
-    await expect(guide.locator('.section-heading > p').last()).toHaveText(translateGuide(guideIntroduction, language));
-    await expect(guide.locator('.tool-guide-section')).toHaveCount(guideSections.length);
-    await expect(guide.locator('.tool-guide-section').nth(0)).toHaveAttribute('aria-labelledby', 'tool-guide-benefits');
-    await expect(guide.locator('.tool-guide-section').nth(1)).toHaveAttribute('aria-labelledby', 'tool-guide-quick-start');
-    const quickStart = guide.locator('.tool-guide-section[aria-labelledby="tool-guide-quick-start"]');
-    await expect(quickStart.locator(':scope > ol')).toHaveCount(1);
-    await expect(quickStart.locator(':scope > ol > li')).toHaveCount(5);
-    await expect(quickStart.locator(':scope > ul')).toHaveCount(0);
+    await expect(guide.locator('.section-heading h2')).toBeVisible();
+    await expect(guide.locator('.section-heading h2')).toHaveText(translateGuide(guideSections[0].title, language));
+    await expect(guide.locator('.tool-guide-section')).toHaveCount(1);
+    await expect(guide.locator('.tool-guide-section > p, h3')).toHaveCount(0);
+    await expect(guide.locator('.tool-guide-section')).toHaveAttribute('aria-labelledby', 'tool-guide-benefits');
+    await expect(guide.locator('ol, #tool-guide-quick-start')).toHaveCount(0);
+    await expect(guide.locator('.tool-guide-section li')).toHaveCount(4);
     await expect(guide.locator('.tool-guide-section[aria-labelledby="tool-guide-benefits"] > ul')).toHaveCount(1);
-    await expect(guide.locator('.tool-guide-section h3')).toHaveText(guideSections.map(section => translateGuide(section.title, language)));
+    await expect(guide.locator('#tool-guide-benefits')).toHaveText(translateGuide(guideSections[0].title, language));
     await expect(guide.locator('.tool-guide-section > p')).toHaveText(guideSections.flatMap(section => section.paragraphs.map(source => translateGuide(source, language))));
     await expect(guide.locator('.tool-guide-section li')).toHaveText(guideSections.flatMap(section => (section.items ?? []).map(source => translateGuide(source, language))));
+    await expect(guide.locator(`a[href="${detailedGuideUrl}"]`)).toHaveCount(1);
+    await expect(guide.locator(`a[href="${detailedGuideUrl}"]`)).toBeVisible();
+    await expect(guide.getByRole('link', { name: translateFreeTool(detailedGuideLabel, language), exact: true })).toHaveAttribute('href', detailedGuideUrl);
     await expect(guide.locator('img, video, iframe, canvas')).toHaveCount(0);
     expect(await page.locator('.tool-detail > section').evaluateAll(sections => sections.map(section => section.getAttribute('aria-labelledby')))).toEqual(['tool-guide-heading', 'tool-changelog-heading']);
     if (language !== 'ko') await expect(guide).not.toContainText(/[가-힣]/);
+    await expectGuideFits(page);
     await page.reload();
     await expect(page.getByRole('heading', { level: 1, name: 'Modbus Check' })).toBeVisible();
     await expectGuideFits(page);
-    await guide.getByRole('heading', { level: 3 }).first().scrollIntoViewIfNeeded();
+    await guide.locator('#tool-guide-heading').scrollIntoViewIfNeeded();
     await page.screenshot({ path: join(evidence, `${testInfo.project.name}-${language}-detail.png`) });
-    const firstParagraph = guide.locator('.tool-guide-section p').first();
-    const normalFontSize = await firstParagraph.evaluate(element => parseFloat(getComputedStyle(element).fontSize));
+    const firstBenefit = guide.locator('.tool-guide-section li').first();
+    const normalFontSize = await firstBenefit.evaluate(element => parseFloat(getComputedStyle(element).fontSize));
     await page.evaluate(() => document.documentElement.style.fontSize = '200%');
-    expect(await firstParagraph.evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeCloseTo(normalFontSize * 2, 1);
+    expect(await firstBenefit.evaluate(element => parseFloat(getComputedStyle(element).fontSize))).toBeCloseTo(normalFontSize * 2, 1);
     await expectGuideFits(page);
     await expect(guide.locator('.tool-guide-section')).toHaveCount(guideSections.length);
-    await guide.getByRole('heading', { level: 3 }).last().scrollIntoViewIfNeeded();
-    await expect(guide.getByRole('heading', { level: 3 }).last()).toBeInViewport();
+    await guide.locator('.tool-guide-section li').last().scrollIntoViewIfNeeded();
+    await expect(guide.locator('.tool-guide-section li').last()).toBeInViewport();
     await page.locator('#tool-changelog-heading').scrollIntoViewIfNeeded();
     await expect(page.locator('#tool-changelog-heading')).toBeInViewport();
     await expectPublishedDownload(page.locator('.tool-detail'), language);
     if (language === 'ru') {
-      await guide.getByRole('heading', { level: 3 }).first().scrollIntoViewIfNeeded();
+      await firstBenefit.scrollIntoViewIfNeeded();
       await page.screenshot({ path: join(evidence, `${testInfo.project.name}-${language}-guide-200-percent.png`) });
     }
     await page.evaluate(() => document.documentElement.style.fontSize = '');
@@ -292,9 +305,9 @@ test('local release fixtures cover shared downloads, translated history and pend
     });
   });
   const labels = {
-    ko: { download: '최신 버전 다운로드', detail: '소개 및 변경 내역', added: '추가', improved: '개선', fixed: '수정', note: '설치 파일은 GitHub Releases에서 다운로드됩니다.' },
-    en: { download: 'Download latest version', detail: 'Overview and release notes', added: 'Added', improved: 'Improved', fixed: 'Fixed', note: 'The installer is downloaded from GitHub Releases.' },
-    ru: { download: 'Скачать последнюю версию', detail: 'Описание и изменения', added: 'Добавлено', improved: 'Улучшено', fixed: 'Исправлено', note: 'Установщик загружается из GitHub Releases.' },
+    ko: { download: '최신 버전 다운로드', detail: '소개 및 변경 내역', added: '추가', improved: '개선', fixed: '수정' },
+    en: { download: 'Download latest version', detail: 'Overview and release notes', added: 'Added', improved: 'Improved', fixed: 'Fixed' },
+    ru: { download: 'Скачать последнюю версию', detail: 'Описание и изменения', added: 'Добавлено', improved: 'Улучшено', fixed: 'Исправлено' },
   };
   for (const language of ['ko', 'en', 'ru'] as const) {
     fixtureReleases = releaseFixtures;
@@ -304,12 +317,14 @@ test('local release fixtures cover shared downloads, translated history and pend
     const catalog = page.locator('#free-tools');
     await expect(catalog.getByRole('link', { name: labels[language].download, exact: true })).toHaveAttribute('href', releaseFixtures[0].download.url);
     await expect(catalog.locator('.tool-download')).toContainText('test-new');
-    await expect(catalog.getByText(labels[language].note, { exact: true })).toBeVisible();
+    await expect(catalog.locator('.tool-release-notice')).toHaveCount(0);
     await expect(catalog.locator('a[href*="drive.google.com"]')).toHaveCount(0);
     await catalog.getByRole('link', { name: labels[language].detail, exact: true }).click();
     const detail = page.locator('.tool-detail');
     await expect(detail.getByRole('link', { name: labels[language].download, exact: true })).toHaveAttribute('href', releaseFixtures[0].download.url);
-    await expect(detail.getByText(labels[language].note, { exact: true })).toBeVisible();
+    await expect(detail.locator('.tool-release-notice')).toHaveCount(0);
+    await expect(detail.locator('.tool-history-details')).not.toHaveAttribute('open');
+    await detail.locator('.tool-history-details > summary').click();
     const releases = detail.locator('.tool-releases > li');
     await expect(releases).toHaveCount(2);
     await expect(releases.locator('h3')).toHaveText(['test-new', 'test-old']);
@@ -363,7 +378,7 @@ test('live catalog click downloads the verified rc.7 installer', async ({ page }
     await expect(catalogDownload).toHaveAttribute('href', publishedModbusRelease.download.url);
     evidence.catalogHref = await catalogDownload.getAttribute('href');
     await catalog.getByRole('link', { name: '소개 및 변경 내역', exact: true }).click();
-    const detailDownload = page.locator('.tool-detail .tool-download a');
+    const detailDownload = page.locator('.tool-detail .tool-download a.button');
     await expect(detailDownload).toHaveAttribute('href', publishedModbusRelease.download.url);
     evidence.detailHref = await detailDownload.getAttribute('href');
     expect(evidence.detailHref).toBe(evidence.catalogHref);

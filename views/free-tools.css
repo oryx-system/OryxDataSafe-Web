@@ -34,3 +34,7 @@
 @media(max-width:600px) {.tool-grid {grid-template-columns:minmax(0,1fr);gap:24px;}.tool-detail .page-hero {padding-block:36px 42px;}.tool-back {margin-bottom:26px;}}
 .tool-checksum { overflow-wrap: anywhere; }
 .tool-checksum code { font-size: .875em; }
+.tool-guide-link {margin-top:24px;}
+.tool-history-details summary {cursor:pointer;}
+.tool-history-details summary h2 {display:inline;font-size:1.5rem;}
+.tool-history-details[open] summary {margin-bottom:24px;}
