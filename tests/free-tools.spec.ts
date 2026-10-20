@@ -1,5 +1,7 @@
 import { test, expect, type Locator, type Page } from '@playwright/test';
-import { mkdir } from 'node:fs/promises';
+import { createHash } from 'node:crypto';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { freeTools, githubReleaseDownloadUrl, latestToolRelease, toolReleases, type ToolRelease } from '../data/freeTools';
 import { toolGuides } from '../data/toolGuides';
@@ -337,4 +339,62 @@ test('local release fixtures cover shared downloads, translated history and pend
   expect(releaseModuleRequests).toBeGreaterThan(0);
   expect(assetRequests).toBe(0);
   expect(errors).toEqual([]);
+});
+
+test('live catalog click downloads the verified rc.7 installer', async ({ page }, testInfo) => {
+  test.skip(process.env.E2E_BASE_URL !== 'https://oryxdatasafe.co.kr' || testInfo.project.name !== 'desktop-1440', 'Run one real user download only against the production domain in the desktop project.');
+  test.setTimeout(120_000);
+  const browserErrors: string[] = [];
+  page.on('pageerror', error => browserErrors.push(error.message));
+  const evidenceRoot = join(process.env.QA_EVIDENCE_DIR || 'review/free-tools-qa', 'downloads');
+  await mkdir(evidenceRoot, { recursive: true });
+  const temporary = await mkdtemp(join(tmpdir(), 'modbus-live-download-'));
+  const evidence: Record<string, unknown> = {
+    sourcePage: 'https://oryxdatasafe.co.kr/#free-tools',
+    url: publishedModbusRelease.download.url,
+    browserErrors,
+    outcome: 'pending',
+  };
+  try {
+    await page.addInitScript(() => localStorage.setItem('oryx-language', 'ko'));
+    await page.goto('/#free-tools');
+    const catalog = page.locator('#free-tools');
+    const catalogDownload = catalog.getByRole('link', { name: '최신 버전 다운로드', exact: true });
+    await expect(catalogDownload).toHaveAttribute('href', publishedModbusRelease.download.url);
+    evidence.catalogHref = await catalogDownload.getAttribute('href');
+    await catalog.getByRole('link', { name: '소개 및 변경 내역', exact: true }).click();
+    const detailDownload = page.locator('.tool-detail .tool-download a');
+    await expect(detailDownload).toHaveAttribute('href', publishedModbusRelease.download.url);
+    evidence.detailHref = await detailDownload.getAttribute('href');
+    expect(evidence.detailHref).toBe(evidence.catalogHref);
+    await page.getByRole('link', { name: '무료 도구 목록', exact: true }).click();
+    await expect(catalogDownload).toBeVisible();
+    await catalog.locator('.tool-card').screenshot({ path: join(evidenceRoot, 'live-user-download-catalog.png') });
+    evidence.screenshot = 'live-user-download-catalog.png';
+    // This page has no request interception: use the actual site's download button.
+    const [download] = await Promise.all([
+      page.waitForEvent('download', { timeout: 90_000 }),
+      catalogDownload.click(),
+    ]);
+    evidence.filename = download.suggestedFilename();
+    await download.saveAs(join(temporary, 'installer.exe'));
+    const bytes = await readFile(join(temporary, 'installer.exe'));
+    evidence.size = bytes.length;
+    evidence.sha256 = createHash('sha256').update(bytes).digest('hex');
+    evidence.downloadFailure = await download.failure();
+    await download.delete();
+    expect(evidence.filename).toBe('ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe');
+    expect(evidence.size).toBe(35_030_462);
+    expect(evidence.sha256).toBe(publishedModbusRelease.download.sha256);
+    expect(evidence.downloadFailure).toBeNull();
+    expect(browserErrors).toEqual([]);
+    evidence.outcome = 'passed';
+  } catch (error) {
+    evidence.outcome = 'failed';
+    evidence.error = error instanceof Error ? error.message : String(error);
+    throw error;
+  } finally {
+    await rm(temporary, { recursive: true, force: true });
+    await writeFile(join(evidenceRoot, 'live-user-download.json'), `${JSON.stringify(evidence)}\n`);
+  }
 });
