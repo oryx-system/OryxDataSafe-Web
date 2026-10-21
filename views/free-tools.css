@@ -38,3 +38,5 @@
 .tool-history-details summary {cursor:pointer;}
 .tool-history-details summary h2 {display:inline;font-size:1.5rem;}
 .tool-history-details[open] summary {margin-bottom:24px;}
+.tool-download-actions {display:flex;flex-wrap:wrap;align-items:center;gap:14px 22px;}
+.tool-download-actions .text-link {margin-top:0;white-space:normal;}

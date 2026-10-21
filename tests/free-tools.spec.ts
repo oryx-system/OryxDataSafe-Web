@@ -10,7 +10,7 @@ import { toolGuideTranslations } from '../i18n/toolGuides';
 
 const detailedGuideUrl = 'https://github.com/oryx-system/OryxDataSafe-Web/blob/main/release/modbus-check/USER_GUIDE.ko.md';
 const detailedGuideLabel = 'GitHub 상세 사용법 (한국어)';
-const releaseNoticeLabel = '릴리스 안내·알려진 제한 (한국어)';
+const releaseNoticeLabel = '버전·변경 내역';
 const translateGuide = (source: string, language: 'ko' | 'en' | 'ru') => language === 'ko' ? source : toolGuideTranslations[source][language];
 const translateFreeTool = (source: string, language: 'ko' | 'en' | 'ru') => language === 'ko' ? source : freeToolTranslations[source][language];
 // Pinned to the official release handoff; binary bytes are verified separately.
@@ -26,14 +26,22 @@ const publishedModbusRelease = {
 };
 
 async function expectPublishedDownload(scope: Locator, language: 'ko' | 'en' | 'ru') {
-  await expect(scope.locator('.tool-download a.button')).toHaveCount(1);
-  await expect(scope.getByRole('link', { name: translateFreeTool('최신 버전 다운로드', language), exact: true })).toHaveAttribute('href', publishedModbusRelease.download.url);
+  const actions = scope.locator('.tool-download-actions');
+  await expect(actions).toHaveCount(1);
+  await expect(actions.locator(':scope > a.button')).toHaveCount(1);
+  await expect(actions.getByRole('link', { name: translateFreeTool('최신 버전 다운로드', language), exact: true })).toHaveAttribute('href', publishedModbusRelease.download.url);
+  await expect(actions.locator(':scope > a.text-link')).toHaveCount(1);
+  await expect(actions.getByRole('link', { name: translateFreeTool(releaseNoticeLabel, language), exact: true })).toHaveAttribute('href', publishedModbusRelease.releaseNotesUrl);
+  expect(await actions.locator(':scope > a').evaluateAll(links => links.map(link => link.getAttribute('href')))).toEqual([
+    publishedModbusRelease.download.url, publishedModbusRelease.releaseNotesUrl,
+  ]);
+  await expect(scope.locator(`.tool-download a[href="${publishedModbusRelease.releaseNotesUrl}"]`)).toHaveCount(1);
   await expect(scope.locator('.tool-download')).toContainText(publishedModbusRelease.version);
   await expect(scope.locator('.tool-download')).toContainText(translateFreeTool('사전 공개', language));
   await expect(scope.locator('.tool-download button')).toHaveCount(0);
   const notice = latestToolRelease('modbus-check')!.notice!;
-  await expect(scope.locator('.tool-release-notice')).toContainText(translateFreeTool(notice, language));
-  await expect(scope.locator('.tool-release-notice').getByRole('link', { name: translateFreeTool(releaseNoticeLabel, language), exact: true })).toHaveAttribute('href', publishedModbusRelease.releaseNotesUrl);
+  await expect(scope.locator('.tool-release-notice')).toHaveText(translateFreeTool(notice, language));
+  await expect(scope.locator('.tool-release-notice a')).toHaveCount(0);
   await expect(scope.locator('.tool-download a')).toHaveCount(2);
 }
 
@@ -356,11 +364,13 @@ test('local release fixtures cover shared downloads, translated history and pend
   expect(errors).toEqual([]);
 });
 
-test('live catalog click downloads the verified rc.7 installer', async ({ page }, testInfo) => {
+test('live catalog links open the official release and download the verified rc.7 installer', async ({ page }, testInfo) => {
   test.skip(process.env.E2E_BASE_URL !== 'https://oryxdatasafe.co.kr' || testInfo.project.name !== 'desktop-1440', 'Run one real user download only against the production domain in the desktop project.');
   test.setTimeout(120_000);
   const browserErrors: string[] = [];
-  page.on('pageerror', error => browserErrors.push(error.message));
+  page.on('pageerror', error => {
+    if (page.url().startsWith('https://oryxdatasafe.co.kr/')) browserErrors.push(error.message);
+  });
   const evidenceRoot = join(process.env.QA_EVIDENCE_DIR || 'review/free-tools-qa', 'downloads');
   await mkdir(evidenceRoot, { recursive: true });
   const temporary = await mkdtemp(join(tmpdir(), 'modbus-live-download-'));
@@ -384,8 +394,25 @@ test('live catalog click downloads the verified rc.7 installer', async ({ page }
     expect(evidence.detailHref).toBe(evidence.catalogHref);
     await page.getByRole('link', { name: '무료 도구 목록', exact: true }).click();
     await expect(catalogDownload).toBeVisible();
+    const releaseLink = catalog.locator('.tool-download-actions').getByRole('link', { name: releaseNoticeLabel, exact: true });
+    await expect(releaseLink).toHaveAttribute('href', publishedModbusRelease.releaseNotesUrl);
+    evidence.releaseHref = await releaseLink.getAttribute('href');
     await catalog.locator('.tool-card').screenshot({ path: join(evidenceRoot, 'live-user-download-catalog.png') });
     evidence.screenshot = 'live-user-download-catalog.png';
+    const [releaseResponse] = await Promise.all([
+      page.waitForResponse(response => response.url() === publishedModbusRelease.releaseNotesUrl && response.request().isNavigationRequest(), { timeout: 45_000 }),
+      page.waitForURL(publishedModbusRelease.releaseNotesUrl, { waitUntil: 'domcontentloaded', timeout: 45_000 }),
+      releaseLink.click(),
+    ]);
+    evidence.releasePageHttp = releaseResponse.status();
+    evidence.releasePageUrl = page.url();
+    expect(evidence.releasePageHttp).toBe(200);
+    expect(evidence.releasePageUrl).toBe(publishedModbusRelease.releaseNotesUrl);
+    await expect(page).toHaveTitle(/Modbus Check 0\.2\.0-rc\.7/);
+    evidence.releasePageTitle = await page.title();
+    await page.goBack({ waitUntil: 'domcontentloaded' });
+    await expect(page).toHaveURL('https://oryxdatasafe.co.kr/#free-tools');
+    await expect(catalogDownload).toHaveAttribute('href', publishedModbusRelease.download.url);
     // This page has no request interception: use the actual site's download button.
     const [download] = await Promise.all([
       page.waitForEvent('download', { timeout: 90_000 }),

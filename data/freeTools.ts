@@ -29,7 +29,7 @@ export const freeTools: FreeTool[] = [
     slug: 'modbus-check',
     name: 'Modbus Check',
     category: '통신 점검',
-    description: '통신 설정을 찾고 주소별 값을 비교하며, 트렌드와 Excel 기록으로 점검 내용을 정리하는 무료 Modbus 도구입니다.',
+    description: 'Excel에서 작성한 주소맵을 불러와 통신 확인과 기록으로 이어가는 BMS·MES 실무용 무료 도구입니다.',
   },
 ];
 

@@ -11,7 +11,7 @@ function LatestDownload({ slug }: { slug: string }) {
   const { t } = useLanguage();
   const latest = latestToolRelease(slug);
   if (!latest) return <div className="tool-download"><button className="button button-secondary" type="button" disabled>{t('다운로드 준비 중')}</button><p>{t('다운로드 파일이 준비되면 이곳에서 최신 버전을 받을 수 있습니다.')}</p></div>;
-  return <div className="tool-download"><a className="button button-primary" href={githubReleaseDownloadUrl(latest.download)!}><Download size={18} aria-hidden="true" />{t('최신 버전 다운로드')}</a><p>{latest.version}{latest.prerelease && <> · {t('사전 공개')}</>}</p>{latest.notice && <p className="tool-release-notice">{t(latest.notice)} {latest.releaseNotesUrl && <a href={latest.releaseNotesUrl}>{t('릴리스 안내·알려진 제한 (한국어)')}</a>}</p>}</div>;
+  return <div className="tool-download"><div className="tool-download-actions"><a className="button button-primary" href={githubReleaseDownloadUrl(latest.download)!}><Download size={18} aria-hidden="true" />{t('최신 버전 다운로드')}</a>{latest.releaseNotesUrl && <a className="text-link" href={latest.releaseNotesUrl}>{t('버전·변경 내역')}<ArrowRight size={17} aria-hidden="true" /></a>}</div><p>{latest.version}{latest.prerelease && <> · {t('사전 공개')}</>}</p>{latest.notice && <p className="tool-release-notice">{t(latest.notice)}</p>}</div>;
 }
 
 export default function FreeTools() {
