@@ -425,8 +425,8 @@ test('live catalog links open the official release and download the verified rc.
     evidence.sha256 = createHash('sha256').update(bytes).digest('hex');
     evidence.downloadFailure = await download.failure();
     await download.delete();
-    expect(evidence.filename).toBe('ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe');
-    expect(evidence.size).toBe(35_030_462);
+    expect(evidence.filename).toBe(new URL(publishedModbusRelease.download.url).pathname.split('/').at(-1));
+    expect(evidence.size).toBe(35_100_532);
     expect(evidence.sha256).toBe(publishedModbusRelease.download.sha256);
     expect(evidence.downloadFailure).toBeNull();
     expect(browserErrors).toEqual([]);
