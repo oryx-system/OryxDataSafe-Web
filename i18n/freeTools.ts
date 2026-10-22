@@ -1,4 +1,11 @@
 export const freeToolTranslations: Record<string, { en: string; ru: string }> = {
+  "사전 릴리스 · 미서명 EXE · 다른 PC 기본 Office 환경 미검증.": {"en":"Pre-release · unsigned EXE · default Office on other PCs is not yet validated.","ru":"Предварительный выпуск · EXE без цифровой подписи · стандартная среда Office на других ПК не проверена."},
+  "PDU 0~1000 표준 양식과 FC03/FC04·0/1 기반 참조 주소 선택을 제공합니다.": {"en":"Provides a PDU 0–1000 standard form with FC03/FC04 and zero- or one-based reference selection.","ru":"Стандартная форма охватывает PDU 0–1000 с выбором FC03/FC04 и адресации с нуля или единицы."},
+  "표준·현재 주소맵은 Windows 저장 창에서 생성하며 보안 검사와 기존 파일 보호를 유지합니다.": {"en":"Standard and current address maps use the Windows save dialog while retaining security checks and protection of existing files.","ru":"Стандартные и текущие карты адресов сохраняются через диалог Windows с сохранением проверок безопасности и защиты существующих файлов."},
+  "최대 ASCII 편집 속도와 반복 전환 안정성을 개선했습니다(검증 PC 측정).": {"en":"Improves maximum-length ASCII editing and repeated type-change stability, measured on the validation PC.","ru":"Улучшены скорость редактирования ASCII максимальной длины и стабильность повторных смен типа; измерено на проверочном ПК."},
+  "공식 Node.js 24.22.1 보안 수정판을 반영했습니다.": {"en":"Includes the official Node.js 24.22.1 security release.","ru":"Включён официальный выпуск Node.js 24.22.1 с исправлениями безопасности."},
+  "Binary 문서용 ON/OFF 입력 보호와 ASCII Bytes 1~246 유효성 오류를 수정했습니다.": {"en":"Fixes protection of document-only Binary ON/OFF input and validation of ASCII Bytes from 1 to 246.","ru":"Исправлены защита текстовых полей Binary ON/OFF в документе и проверка ASCII Bytes от 1 до 246."},
+  "주소 행은 중성 회색/흰색 교차, Binary 하위 행은 흰색으로 통일하고 주소 값을 가운데 정렬했습니다.": {"en":"Uses neutral gray/white address rows, white Binary child rows and centered address values.","ru":"Строки адресов чередуются серым и белым, дочерние строки Binary белые, значения адресов выровнены по центру."},
   '사전 공개': { en: 'Pre-release', ru: 'Предварительный выпуск' },
   '공식 릴리스 안내': { en: 'Official release notes', ru: 'Официальное описание выпуска' },
   '미서명 EXE · 예정된 Node HIGH 보안 수정 미포함.': { en: 'Unsigned EXE · Scheduled Node HIGH security fix not included.', ru: 'EXE без подписи · Запланированное исправление безопасности Node HIGH не включено.' },

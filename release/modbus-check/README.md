@@ -14,7 +14,7 @@ Modbus Check는 Excel에서 작성한 주소맵을 불러와 통신 확인과 �
 
 ## 5단계로 시작하기
 
-1. **설치:** 아래의 0.2.0-rc.7 사전 공개 설치 파일과 알려진 한계를 확인하고, 배포처·버전·SHA256을 대조한 뒤 설치합니다.
+1. **설치:** 아래의 0.2.0-rc.11 사전 공개 설치 파일과 알려진 한계를 확인하고, 배포처·버전·SHA256을 대조한 뒤 설치합니다.
 2. **설정하고 연결:** TCP의 IP·포트·Unit ID 또는 시리얼의 COM 포트·통신 조건을 확인하고 직접 연결합니다. 검색 결과를 채워 넣는 것만으로 자동 연결하지 않습니다.
 3. **작은 범위 읽기:** 의미를 아는 주소부터 적은 수량으로 읽습니다. 주소의 0/1 기준과 실제 PDU 주소, 자료형·워드 순서를 장비 주소표와 대조합니다.
 4. **기록과 트렌드 확인:** 필요한 읽기 기록을 시작하고 숫자형 값의 변화를 살펴봅니다. 브라우저 차트와 파일 기록의 상태를 각각 확인하세요. ASCII 문자열은 트렌드 대상에서 제외합니다.
@@ -22,18 +22,18 @@ Modbus Check는 Excel에서 작성한 주소맵을 불러와 통신 확인과 �
 
 ## 다운로드
 
-**0.2.0-rc.7은 사전 공개 시험판(prerelease)입니다.** 2026-10-20 23:37:10 UTC에 GitHub Releases에 공개됐습니다. [릴리스 설명과 첨부 자료](https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.7)를 읽은 뒤 사용하세요.
+**0.2.0-rc.11은 사전 공개 시험판(prerelease)입니다.** 2026-10-22 05:19:28 UTC에 GitHub Releases에 공개됐습니다. [릴리스 설명과 첨부 자료](https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.11)를 읽은 뒤 사용하세요.
 
-- [Windows x64 설치 파일 — ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe)
-- [공식 SHA256SUMS.txt](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/SHA256SUMS.txt)
+- [Windows x64 설치 파일 — ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe)
+- [공식 SHA256SUMS.txt](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/SHA256SUMS.txt)
 
 릴리스에 고지된 설치 파일의 SHA256:
 
 ```text
-9b8dd1f9e9718248e4634ff248fe0100226e9a6756e343502a1943665361bc08
+dd63d97fba5b375dc942ad270b5043f57cfd61f6e6e2df9f43a08a40b281d185
 ```
 
-이 설치 파일은 **코드 서명되지 않은 EXE**입니다. Node.js 24.22.0을 포함하며 예고된 HIGH 보안 업데이트의 수정은 포함하지 않습니다. 앱에 영향이 없다고 보장하지 않으며 보안 수정이 완료된 버전으로 안내하지 않습니다.
+설치 EXE와 VBA는 미서명입니다. 공식 Node.js 24.22.1 보안 수정판을 포함합니다. 다른 PC의 기본 Office 환경과 조직별 매크로 정책은 미검증이며 일반 보안 알림은 그대로 적용됩니다. 기존 사용자 파일의 출처 표시를 제거하거나 전체 매크로 허용·신뢰 등록을 자동 수행하지 않습니다.
 
 프로그램 소개는 [Oryx DataSafe 홈페이지](https://oryxdatasafe.co.kr/#free-tools/modbus-check)에서 확인할 수 있습니다. 설치본을 사용하기 전에는 [한국어 사용 가이드](USER_GUIDE.ko.md)를 읽어 주세요.
 
@@ -62,7 +62,7 @@ Excel 주소맵, 수신값의 시점별 백업과 시간 순서의 읽기 기록
 
 XLSM에는 비트명·설명 편집과 행 잠금·해제를 돕는 매크로가 들어 있습니다. 매크로가 없는 파일이 필요하면 Excel의 일반 ‘다른 이름으로 저장’에서 XLSX로 저장할 수 있습니다. XLSX에서는 매크로로 처리하던 자동 잠금·해제가 실행되지 않으므로 같은 편집 동작을 기대하지 마세요. 편집용 원본은 별도로 보관합니다. 앱에 별도 전달용 XLSX 버튼은 없습니다. 자세한 구분은 [사용 가이드](USER_GUIDE.ko.md)를 확인하세요.
 
-rc.6 표준 양식의 실제 주소 목록은 PDU 0~500의 고유 주소 501개이며 누락·중복이 없음을 확인했습니다. 화면의 읽기 범위를 143개 또는 4개 주소로 설정해도 표준 양식의 주소 목록은 같습니다. rc.7의 공식 검수에서도 첫·마지막 PDU 0/500과 고유 주소 501개가 확인됐습니다. `No`는 순번이며 PDU 주소가 아닙니다. 주소 개수는 비트 보조 행과 서식용 빈 행을 빼고 고유 PDU 주소로 집계합니다. 이 결과는 표준 양식의 주소 목록에 관한 것으로, 현재 데이터 내보내기·로그나 전체 PDU 범위의 검증 완료를 뜻하지 않습니다.
+RC11 표준 양식은 PDU 0~1000을 양끝 포함해 고유 주소 1001개를 제공합니다. No와 PDU 주소는 구분하며 Binary 보조 행은 주소 수에 포함하지 않습니다. Holding FC03 또는 Input FC04와 참조 0/1 기반 표시를 선택할 수 있고 기존 기본값은 유지합니다.
 
 ## 쓰기 검토
 

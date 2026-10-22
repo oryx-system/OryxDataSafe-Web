@@ -2,15 +2,15 @@
 
 Modbus Check는 Excel에서 작성한 주소맵을 불러와 통신 확인과 기록으로 이어가는 BMS·MES 실무용 무료 도구입니다. 이 가이드는 프로그램의 Excel 양식에 주소·자료형·설명·비트 설명을 준비하고, 미리보기·가져오기 후 실제 수신값을 확인해 트렌드와 CSV·Excel 기록으로 정리하는 방법을 안내합니다.
 
-현재 공개 버전은 **0.2.0-rc.7 사전 공개 시험판(prerelease)**입니다. [공식 릴리스](https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.7)는 2026-10-20 23:37:10 UTC에 게시됐습니다.
+현재 공개 버전은 **0.2.0-rc.11 사전 공개 시험판(prerelease)**입니다. [공식 릴리스](https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.11)는 2026-10-22 05:19:28 UTC에 게시됐습니다.
 
-[Windows x64 설치 파일 — ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe)를 받고 [공식 SHA256SUMS.txt](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/SHA256SUMS.txt)와 대조하세요. 릴리스에 고지된 설치 파일의 SHA256은 다음과 같습니다.
+[Windows x64 설치 파일 — ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe)를 받고 [공식 SHA256SUMS.txt](https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/SHA256SUMS.txt)와 대조하세요. 릴리스에 고지된 설치 파일의 SHA256은 다음과 같습니다.
 
 ```text
-9b8dd1f9e9718248e4634ff248fe0100226e9a6756e343502a1943665361bc08
+dd63d97fba5b375dc942ad270b5043f57cfd61f6e6e2df9f43a08a40b281d185
 ```
 
-설치 EXE는 코드 서명되지 않았습니다. 포함된 Node.js 24.22.0에는 예고된 HIGH 보안 업데이트의 수정이 반영되지 않았습니다. 앱에 영향이 없다고 보장하지 않으며 이 시험판을 보안 수정 완료 버전으로 안내하지 않습니다. 릴리스 설명과 아래의 검증 한계를 먼저 확인하세요.
+설치 EXE와 VBA는 미서명입니다. 공식 Node.js 24.22.1 보안 수정판을 포함합니다. 다른 PC의 기본 Office 환경과 조직별 매크로 정책은 미검증이며 일반 보안 알림은 그대로 적용됩니다. 기존 사용자 파일의 출처 표시를 제거하거나 전체 매크로 허용·신뢰 등록을 자동 수행하지 않습니다.
 
 ## 어떤 작업에 도움이 되나요?
 
@@ -22,7 +22,7 @@ Modbus Check는 Excel에서 작성한 주소맵을 불러와 통신 확인과 �
 
 ## 5단계 시작 순서
 
-1. **설치:** 0.2.0-rc.7 사전 공개의 알려진 한계와 배포처·버전·SHA256을 확인하고 설치합니다.
+1. **설치:** 0.2.0-rc.11 사전 공개의 알려진 한계와 배포처·버전·SHA256을 확인하고 설치합니다.
 2. **설정하고 직접 연결:** 장비 매뉴얼에 따라 TCP 또는 시리얼 통신 조건을 정하고 연결합니다. 검색 결과 반영은 자동 연결이 아닙니다.
 3. **작은 범위 읽기:** 의미를 아는 주소를 적은 수량으로 읽고 0/1 기준·PDU 주소·자료형·워드 순서를 대조합니다.
 4. **기록과 숫자 트렌드 확인:** 읽기 기록을 시작하고 숫자형 값의 변화를 확인합니다. 차트와 파일 기록의 상태를 각각 확인하세요.
@@ -162,9 +162,9 @@ CSV는 UTF-8 BOM, CRLF 줄바꿈과 필요한 따옴표 처리를 사용하며, 
 
 ### 표준 양식의 주소 개수 확인
 
-rc.6 표준 양식의 실제 주소 목록은 PDU 0부터 500까지 양 끝을 포함한 고유 주소 501개입니다. 이 목록에 누락이나 중복이 없음을 확인했습니다. 화면의 읽기 범위를 143개 또는 4개 주소로 설정해도 표준 양식의 주소 목록은 바뀌지 않습니다. rc.7 공식 검수에서도 표준 양식의 첫·마지막 PDU 0/500과 고유 주소 501개가 확인됐습니다.
+RC11 표준 양식은 PDU 0~1000을 양끝 포함해 고유 주소 1001개를 제공합니다. No와 PDU 주소는 구분하며 Binary 보조 행은 주소 수에 포함하지 않습니다. Holding FC03 또는 Input FC04와 참조 0/1 기반 표시를 선택할 수 있고 기존 기본값은 유지합니다.
 
-주소 개수는 Excel의 전체 행 수나 `No` 열의 마지막 숫자로 세지 않습니다. `No`는 표시 순번이며 PDU 주소가 아닙니다. 비트 보조 행과 서식용 빈 행을 제외하고 실제 PDU 주소의 고유값을 세어 0~500의 501개 주소가 있는지 대조합니다.
+주소 개수는 Excel의 전체 행 수나 `No` 열의 마지막 숫자로 세지 않습니다. `No`는 표시 순번이며 PDU 주소가 아닙니다. 비트 보조 행과 서식용 빈 행을 제외하고 실제 PDU 주소의 고유값을 세어 0~1000의 1001개 주소가 있는지 대조합니다.
 
 이 결과는 표준 양식의 주소 목록만 확인한 것입니다. 현재 데이터 내보내기·로그나 전체 PDU 0~65535 범위가 모두 검증됐다는 뜻은 아닙니다. 사용하는 파일의 목적과 실제 주소 범위를 따로 확인하세요.
 

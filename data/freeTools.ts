@@ -39,6 +39,31 @@ export const freeTools: FreeTool[] = [
  */
 export const toolReleases: Record<string, ToolRelease[]> = {
   'modbus-check': [
+{
+      "version": "0.2.0-rc.11",
+      "prerelease": true,
+      "releasedOn": "2026-10-22",
+      "releaseNotesUrl": "https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.11",
+      "notice": "사전 릴리스 · 미서명 EXE · 다른 PC 기본 Office 환경 미검증.",
+      "download": {
+            "url": "https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe",
+            "sha256": "dd63d97fba5b375dc942ad270b5043f57cfd61f6e6e2df9f43a08a40b281d185"
+      },
+      "changes": {
+            "added": [
+                  "PDU 0~1000 표준 양식과 FC03/FC04·0/1 기반 참조 주소 선택을 제공합니다."
+            ],
+            "improved": [
+                  "표준·현재 주소맵은 Windows 저장 창에서 생성하며 보안 검사와 기존 파일 보호를 유지합니다.",
+                  "최대 ASCII 편집 속도와 반복 전환 안정성을 개선했습니다(검증 PC 측정).",
+                  "공식 Node.js 24.22.1 보안 수정판을 반영했습니다."
+            ],
+            "fixed": [
+                  "Binary 문서용 ON/OFF 입력 보호와 ASCII Bytes 1~246 유효성 오류를 수정했습니다.",
+                  "주소 행은 중성 회색/흰색 교차, Binary 하위 행은 흰색으로 통일하고 주소 값을 가운데 정렬했습니다."
+            ]
+      }
+},
     {
       version: '0.2.0-rc.7',
       prerelease: true,

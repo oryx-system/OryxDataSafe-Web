@@ -15,14 +15,14 @@ const translateGuide = (source: string, language: 'ko' | 'en' | 'ru') => languag
 const translateFreeTool = (source: string, language: 'ko' | 'en' | 'ru') => language === 'ko' ? source : freeToolTranslations[source][language];
 // Pinned to the official release handoff; binary bytes are verified separately.
 const publishedModbusRelease = {
-  version: '0.2.0-rc.7',
-  releasedOn: '2026-10-20',
-  prerelease: true,
-  releaseNotesUrl: 'https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.7',
-  download: {
-    url: 'https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.7/ModbusCheck-0.2.0-rc.7-Setup-win-x64.exe',
-    sha256: '9b8dd1f9e9718248e4634ff248fe0100226e9a6756e343502a1943665361bc08',
-  },
+  "version": "0.2.0-rc.11",
+  "releasedOn": "2026-10-22",
+  "prerelease": true,
+  "releaseNotesUrl": "https://github.com/oryx-system/ModbusCheck-Releases/releases/tag/v0.2.0-rc.11",
+  "download": {
+    "url": "https://github.com/oryx-system/ModbusCheck-Releases/releases/download/v0.2.0-rc.11/ModbusCheck-0.2.0-rc.11-Setup-win-x64.exe",
+    "sha256": "dd63d97fba5b375dc942ad270b5043f57cfd61f6e6e2df9f43a08a40b281d185"
+  }
 };
 
 async function expectPublishedDownload(scope: Locator, language: 'ko' | 'en' | 'ru') {
@@ -157,7 +157,7 @@ test('only pinned GitHub release assets with SHA256 metadata enable downloads', 
   }
 });
 
-test('published rc.7 metadata matches the verified asset and invalid latest metadata stays pending', () => {
+test('published rc.11 metadata matches the verified asset and invalid latest metadata stays pending', () => {
   const published = latestToolRelease('modbus-check')!;
   expect(published).toMatchObject(publishedModbusRelease);
   expect(githubReleaseDownloadUrl(published.download)).toBe(publishedModbusRelease.download.url);
@@ -364,7 +364,7 @@ test('local release fixtures cover shared downloads, translated history and pend
   expect(errors).toEqual([]);
 });
 
-test('live catalog links open the official release and download the verified rc.7 installer', async ({ page }, testInfo) => {
+test('live catalog links open the official release and download the verified rc.11 installer', async ({ page }, testInfo) => {
   test.skip(process.env.E2E_BASE_URL !== 'https://oryxdatasafe.co.kr' || testInfo.project.name !== 'desktop-1440', 'Run one real user download only against the production domain in the desktop project.');
   test.setTimeout(120_000);
   const browserErrors: string[] = [];
