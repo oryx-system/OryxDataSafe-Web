@@ -408,7 +408,7 @@ test('live catalog links open the official release and download the verified rc.
     evidence.releasePageUrl = page.url();
     expect(evidence.releasePageHttp).toBe(200);
     expect(evidence.releasePageUrl).toBe(publishedModbusRelease.releaseNotesUrl);
-    await expect(page).toHaveTitle(/Modbus Check 0\.2\.0-rc\.7/);
+    await expect.poll(() => page.title()).toContain('Modbus Check ' + publishedModbusRelease.version);
     evidence.releasePageTitle = await page.title();
     await page.goBack({ waitUntil: 'domcontentloaded' });
     await expect(page).toHaveURL('https://oryxdatasafe.co.kr/#free-tools');
